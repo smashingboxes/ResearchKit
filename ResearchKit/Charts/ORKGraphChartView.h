@@ -336,6 +336,11 @@ IB_DESIGNABLE
 @property (nonatomic, readonly) double maximumValue;
 
 /**
+ The value where you want to place a ticker on the y-axis that is not the minimum or maximum value.
+ */
+@property (nonatomic) double yAxisMarkerValue;
+  
+/**
  A Boolean value indicating whether the graph chart view should draw horizontal reference lines.
 
  The default value of this property is NO.

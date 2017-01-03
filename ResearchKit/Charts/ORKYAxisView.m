@@ -45,6 +45,7 @@ static const CGFloat ImageVerticalPadding = 3.0;
     
     NSMutableDictionary *_tickLayersByFactor;
     NSMutableDictionary *_tickLabelsByFactor;
+    NSMutableArray *_tickLabels;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -113,11 +114,18 @@ static const CGFloat ImageVerticalPadding = 3.0;
         NSArray *yAxisLabelFactors = nil;
         CGFloat minimumValue = _parentGraphChartView.minimumValue;
         CGFloat maximumValue = _parentGraphChartView.maximumValue;
+        CGFloat yMarker = _parentGraphChartView.yAxisMarkerValue;
         if (minimumValue == maximumValue) {
             yAxisLabelFactors = @[@0.5f];
         } else {
-            yAxisLabelFactors = @[@0.2f, @1.0f];
+            double yFactor = (yMarker - minimumValue)/(maximumValue - minimumValue);
+            yAxisLabelFactors = @[@0.0f, @(yFactor), @1.0f];
         }
+        
+        for (UILabel* tickLabel in _tickLabels) {
+            [tickLabel removeFromSuperview];
+        }
+        _tickLabels = [NSMutableArray new];
         
         for (NSNumber *factorNumber in yAxisLabelFactors) {
             
@@ -143,15 +151,15 @@ static const CGFloat ImageVerticalPadding = 3.0;
                                                                            labelHeight)];
             
             CGFloat yValue = minimumValue + (maximumValue - minimumValue) * factor;
-            if (yValue != 0) {
-                tickLabel.text = [NSString stringWithFormat:@"%0.0f", yValue];
-            }
+            
+            tickLabel.text = [NSString stringWithFormat:@"%0.0f", yValue];
             tickLabel.backgroundColor = [UIColor clearColor];
             tickLabel.textColor = _titleColor;
             tickLabel.textAlignment = NSTextAlignmentRight;
             tickLabel.font = _titleFont;
             tickLabel.minimumScaleFactor = 0.8;
             [tickLabel sizeToFit];
+            [_tickLabels addObject:tickLabel];
             [self addSubview:tickLabel];
             _tickLabelsByFactor[factorNumber] = tickLabel;
         }
