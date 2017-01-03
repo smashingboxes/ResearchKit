@@ -101,12 +101,12 @@ static const CGFloat LastLabelHeight = 20.0;
         
         if (i == 0) {
             [constraints addObject:[NSLayoutConstraint constraintWithItem:label
-                                                                attribute:NSLayoutAttributeCenterX
+                                                                attribute:NSLayoutAttributeLeading
                                                                 relatedBy:NSLayoutRelationEqual
                                                                    toItem:label.superview
                                                                 attribute:NSLayoutAttributeLeading
                                                                multiplier:1.0
-                                                                 constant:0.0]];
+                                                                 constant:-10.0]];
         } else {
             // This "magic" multiplier constraints evenly space the labels among
             // the superview without having to manually specify its width.
@@ -188,9 +188,18 @@ static const CGFloat LastLabelHeight = 20.0;
             CGFloat positionOnXAxis = xAxisPoint(i, numberOfTitleLabels, self.bounds.size.width);
             titleTickLayer.frame = CGRectMake(positionOnXAxis - 0.5, -ORKGraphChartViewAxisTickLength, 1, ORKGraphChartViewAxisTickLength);
             titleTickLayer.backgroundColor = _axisColor.CGColor;
-
+            
             [self.layer addSublayer:titleTickLayer];
             [_titleTickLayers addObject:titleTickLayer];
+            if (i == 0 || i == numberOfTitleLabels - 1) {
+                CALayer *titleTickLayer = [CALayer layer];
+                CGFloat positionOnXAxis = xAxisPoint(i, numberOfTitleLabels, self.bounds.size.width);
+                titleTickLayer.frame = CGRectMake(positionOnXAxis - 0.5, -ORKGraphChartViewAxisTickLength, 1, ORKGraphChartViewAxisTickLength);
+                titleTickLayer.backgroundColor = _axisColor.CGColor;
+
+                [self.layer addSublayer:titleTickLayer];
+                [_titleTickLayers addObject:titleTickLayer];
+            }
         }
 
         [self setUpConstraints];
