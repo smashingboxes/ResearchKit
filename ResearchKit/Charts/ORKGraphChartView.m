@@ -75,6 +75,7 @@ static const CGFloat ScrubberLabelVerticalPadding = 4.0;
     NSMutableArray<CALayer *> *_verticalReferenceLineLayers;
     UILabel *_scrubberLabel;
     UIView *_scrubberThumbView;
+    double snappedValue;
 }
 
 #pragma mark - Init
@@ -163,6 +164,8 @@ static const CGFloat ScrubberLabelVerticalPadding = 4.0;
         noDataText = ORKLocalizedString(@"CHART_NO_DATA_TEXT", nil);
     }
     _noDataText = [noDataText copy];
+    _noDataLabel.textColor = [UIColor whiteColor];
+    _noDataLabel.numberOfLines = 0;
     _noDataLabel.text = _noDataText;
 }
 
@@ -721,7 +724,7 @@ ORK_INLINE CALayer *graphPointLayerWithColor(UIColor *color, BOOL drawPointIndic
     double scrubbingValue = [self scrubbingLabelValueForCanvasXPosition:xPosition plotIndex:plotIndex];
 
     _scrubberThumbView.center = CGPointMake(xPosition + ORKGraphChartViewLeftPadding, scrubberYPosition + TopPadding);
-    _scrubberLabel.text = [NSString stringWithFormat:@"%.0f", scrubbingValue == ORKDoubleInvalidValue ? 0.0 : scrubbingValue ];
+    _scrubberLabel.text = [NSString stringWithFormat:@"%.1f", scrubbingValue == ORKDoubleInvalidValue ? 0.0 : scrubbingValue ];
     CGSize textSize = [_scrubberLabel.text boundingRectWithSize:CGSizeMake(_plotView.bounds.size.width,
                                                                            _plotView.bounds.size.height)
                                                         options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin)
@@ -818,9 +821,10 @@ ORK_INLINE CALayer *graphPointLayerWithColor(UIColor *color, BOOL drawPointIndic
     BOOL snapped = [self isXPositionSnapped:xPosition plotIndex:(NSInteger)plotIndex];
     if (snapped) {
         NSInteger pointIndex = [self pointIndexForXPosition:xPosition plotIndex:plotIndex];
-        value = [self scrubbingValueForPlotIndex:plotIndex pointIndex:pointIndex];;
+        value = [self scrubbingValueForPlotIndex:plotIndex pointIndex:pointIndex];
+        snappedValue = value;
     }
-    return value;
+    return snappedValue;
 }
 
 - (double)canvasYPositionForXPosition:(CGFloat)xPosition plotIndex:(NSInteger)plotIndex {
